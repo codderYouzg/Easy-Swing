@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu_bar>
+	<menu caption="文件">
+		<menu caption="新建">
+			<item caption="工程" action="doProject"></item>
+			<item caption="包" action="doPackage"></item>
+			<separator></separator>
+			<item caption="类" action="doClass"></item>
+		</menu>
+		<item caption="打开" action="doOpen"></item>
+		<item caption="关闭" action="exitApp"></item>
+	</menu>
+	<menu caption="编辑"></menu>
+	<menu caption="资源"></menu>
+</menu_bar>

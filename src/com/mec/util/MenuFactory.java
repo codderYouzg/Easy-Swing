@@ -1,0 +1,137 @@
+package com.mec.util;
+
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Hashtable;
+import java.util.Map;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.mec.about_xmlparse.core.XMLParser;
+
+public class MenuFactory {
+	private static final Font menuFont = new Font("宋体", Font.PLAIN, 12);
+	private JMenuBar bar;
+	
+	private Map<String, MenuActionDefinaton> menuActionPool;
+	private Object object;
+	private Class<?> klass;
+	
+	public MenuFactory() {
+	}
+	
+	public void setObject(Object object) {
+		this.object = object;
+		this.klass = object.getClass();
+	}
+
+	public void setBar(JMenuBar bar) {
+		this.bar = bar;
+	}
+	
+	private void creatMenuItem(Element element, JMenu parentMenu) {
+		String captionName = element.getAttribute("caption");
+		String actionCommand = element.getAttribute("action");
+		JMenuItem menuItem = new JMenuItem(captionName);
+		menuItem.setActionCommand(actionCommand);
+		parentMenu.add(menuItem);
+		
+		if (menuActionPool.get(actionCommand) == null) {
+			try {
+				
+				Method method = klass.getDeclaredMethod(actionCommand, new Class<?>[] {});
+				MenuActionDefinaton miad = new MenuActionDefinaton();
+				miad.setObject(object);
+				miad.setMethod(method);
+				menuActionPool.put(actionCommand, miad);
+			} catch (Exception e1) {
+				// TODO 处理异常
+			}
+		}
+		
+		menuItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String command = menuItem.getActionCommand();
+				MenuActionDefinaton miad = menuActionPool.get(command);
+				if (miad == null) {
+					System.out.println("菜单项没有与[" + command+ "]对应的方法");
+					return;
+				}
+				Object object = miad.getObject();
+				Method method = miad.getMethod();
+				try {
+					method.invoke(object, new Object[] {});
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+	}
+	
+	private JMenu creatMenu(Element element, JMenu parentMenu) {
+		String captionName = element.getAttribute("caption");
+		JMenu menu = new JMenu(captionName);
+		menu.setFont(menuFont);
+		if (parentMenu == null) {
+			bar.add(menu);
+		} else {
+			parentMenu.add(menu);
+		}
+		
+		return menu;
+	}
+	
+	private void dealMenu(Element element, JMenu parentMenu) {
+		new XMLParser() {
+			@Override
+			public void dealElement(Element element, int index) {
+				String tagName = element.getTagName();
+				String captionName = element.getAttribute("caption");
+				if (tagName.equalsIgnoreCase("menu")) {	// 处理菜单
+					JMenu menu = creatMenu(element, parentMenu);
+					dealMenu(element, menu);	//处理菜单/菜单项
+					return;
+				}
+				if (tagName.equalsIgnoreCase("item")) {	// 处理菜单项
+					creatMenuItem(element, parentMenu);
+					return;
+				}
+				if (tagName.equalsIgnoreCase("separator")) {	// 处理分隔线
+					if (parentMenu == null) {
+						return;
+					}
+					parentMenu.addSeparator();
+				}
+			}
+		}.parseElement(element);
+	}
+	
+	public void loadMenu(String menuConfigFile) {
+		Document document = XMLParser.getDocument(menuConfigFile);
+		if (document == null) {
+			return;
+			//TODO 可以报/指定异常
+		}
+		
+		menuActionPool = new Hashtable<String, MenuActionDefinaton>();
+		new XMLParser() {
+			
+			@Override
+			public void dealElement(Element element, int index) {
+				dealMenu(element, null);
+			}
+		}.parseRoot(document);;
+	}
+	
+}
