@@ -1,13 +1,6 @@
 package com.mec.menu.test.simple;
 
-import javax.swing.JMenuBar;
-
-import org.w3c.dom.Element;
-
-import com.mec.about_xmlparse.core.XMLParser;
 import com.mec.util.FrameIsNullException;
-import com.mec.util.MenuFactory;
-
 
 public class SimpleTest {
 

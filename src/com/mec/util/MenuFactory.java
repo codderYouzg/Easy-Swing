@@ -15,10 +15,8 @@ import javax.swing.JMenuItem;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.mec.about_xmlparse.core.XMLParser;
-
 public class MenuFactory {
-	private static final Font menuFont = new Font("ËÎÌå", Font.PLAIN, 12);
+	private static final Font menuFont = new Font("ï¿½ï¿½ï¿½ï¿½", Font.PLAIN, 12);
 	private JMenuBar bar;
 	
 	private Map<String, MenuActionDefinaton> menuActionPool;
@@ -53,7 +51,7 @@ public class MenuFactory {
 				miad.setMethod(method);
 				menuActionPool.put(actionCommand, miad);
 			} catch (Exception e1) {
-				// TODO ´¦ÀíÒì³£
+				// TODO ï¿½ï¿½ï¿½ï¿½ï¿½ì³£
 			}
 		}
 		
@@ -64,7 +62,7 @@ public class MenuFactory {
 				String command = menuItem.getActionCommand();
 				MenuActionDefinaton miad = menuActionPool.get(command);
 				if (miad == null) {
-					System.out.println("²Ëµ¥ÏîÃ»ÓÐÓë[" + command+ "]¶ÔÓ¦µÄ·½·¨");
+					System.out.println("ï¿½Ëµï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½[" + command+ "]ï¿½ï¿½Ó¦ï¿½Ä·ï¿½ï¿½ï¿½");
 					return;
 				}
 				Object object = miad.getObject();
@@ -98,16 +96,16 @@ public class MenuFactory {
 			public void dealElement(Element element, int index) {
 				String tagName = element.getTagName();
 				String captionName = element.getAttribute("caption");
-				if (tagName.equalsIgnoreCase("menu")) {	// ´¦Àí²Ëµ¥
+				if (tagName.equalsIgnoreCase("menu")) {	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½
 					JMenu menu = creatMenu(element, parentMenu);
-					dealMenu(element, menu);	//´¦Àí²Ëµ¥/²Ëµ¥Ïî
+					dealMenu(element, menu);	//ï¿½ï¿½ï¿½ï¿½Ëµï¿½/ï¿½Ëµï¿½ï¿½ï¿½
 					return;
 				}
-				if (tagName.equalsIgnoreCase("item")) {	// ´¦Àí²Ëµ¥Ïî
+				if (tagName.equalsIgnoreCase("item")) {	// ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½
 					creatMenuItem(element, parentMenu);
 					return;
 				}
-				if (tagName.equalsIgnoreCase("separator")) {	// ´¦Àí·Ö¸ôÏß
+				if (tagName.equalsIgnoreCase("separator")) {	// ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½
 					if (parentMenu == null) {
 						return;
 					}
@@ -121,7 +119,7 @@ public class MenuFactory {
 		Document document = XMLParser.getDocument(menuConfigFile);
 		if (document == null) {
 			return;
-			//TODO ¿ÉÒÔ±¨/Ö¸¶¨Òì³£
+			//TODO ï¿½ï¿½ï¿½Ô±ï¿½/Ö¸ï¿½ï¿½ï¿½ì³£
 		}
 		
 		menuActionPool = new Hashtable<String, MenuActionDefinaton>();
